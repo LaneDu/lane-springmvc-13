@@ -1,0 +1,51 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+  <!--spring mvc自己本身提供一个字符过滤器只针对post请求的乱码，get请求需要自己从tomcat配置下-->
+  <filter>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter  </filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <!--配置spring mvc 请求方式转换过滤器，会检查请求参数中是否有—method参数，如果有就按照指定的方式转换 -->
+  <filter>
+    <filter-name>hiddenHttpMethodFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>hiddenHttpMethodFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>springmvc</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <!--classpath 下就是指的是编译后的classes文件下该文件下有 java下com包，resources下的文件-->
+      <param-value>classpath:springmvc.xml</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>springmvc</servlet-name>
+    <!--方式一：*.action *.do 拦截后缀比较方便在以前和现在都有很大的使用比例-->
+    <!--方式二：/ 不会拦截.jsp，但是会拦截静态资源文件，如.html.css.png等
+    因为在web容器tomcat当中也有一个web.xml（父）其中有一个defaultServlet负责处理静态资源文件，其中url-pattern是 /
+    而我们写的web.xml（子）中url-pattern也是/ 覆盖了父类的配置,就会被Springmvc拦截了。
+    解决方式 在springmvc.xml配置。
+    为什么不会拦截.jsp呢？是因为 web.xml（父）中有一个JspServlet，这个拦截.jsp文件而我们没有复写这个配置-->
+    <!--方式三：/* 拦截所有，包括jsp不推荐使用-->
+   <!--拦截匹配规则的url进入Springmvc框架处理 -->
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+</web-app>

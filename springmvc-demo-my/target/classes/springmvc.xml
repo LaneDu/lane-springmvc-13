@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:mc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!--注解扫描-->
+    <context:component-scan base-package="com.lagou"/>
+    <!--配置springmvc视图解析器-->
+    <bean  class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+    <!--自动注册最合适的处理器适配器，处理器映射器-->
+    <mvc:annotation-driven conversion-service="convertServiceBean" />
+    <!--方案一 解决静态资源访问问题-->
+    <!--原理：会在Springmvc内部定义一个DefaultServletHttpRequestHanlder对进入displatcherServlet的URL去进行筛选
+    发现是静态文件就会交由web容器（tomcat）去进行处理
+    局限性：只能将静态文件或目录放在webapp下不能放入web-inf或者resources或者jar内-->
+    <mvc:default-servlet-handler/>
+    <!--方案二 解决静态资源访问问题，spring mvc自己去处理-->
+    <!--原理 mapping：静态资源约定url规则
+            location：静态资源存放的位置
+            也可以指定多个路径 mapping="/,/resourcess/**"-->
+    <mvc:resources mapping="/resources/**" location="classpath:/"/>
+    <mvc:resources mapping="/js/*" location="/WEB-INF/js/"/>
+    <!--注册自定义类型转换器,需要在调用最合适的处理器适配器时关联-->
+    <bean id="convertServiceBean" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.lagou.converter.DateConverter"></bean>
+            </set>
+        </property>
+    </bean>
+   <!-- <mvc:interceptors>
+        &lt;!&ndash;如果只配置一个bean会拦截所有&ndash;&gt;
+        <bean class="com.lagou.inteceptor.MyInteceptor01"></bean>
+    </mvc:interceptors>-->
+</beans>
