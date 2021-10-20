@@ -44,10 +44,12 @@ public class AccountController {
 
     }
 
+
     @RequestMapping(value = "/queryTest",method = RequestMethod.GET)
     public ModelAndView queryTest(ModelAndView modelAndView) throws Exception {
-
+        List<Account> accountList = accountService.queryAccountList();
         modelAndView.addObject("date",new Date());
+        modelAndView.addObject("accountList",accountList);
         modelAndView.setViewName("success");
 
         return modelAndView;
